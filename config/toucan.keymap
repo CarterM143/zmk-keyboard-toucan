@@ -9,8 +9,8 @@
  *   0 BASE  QWERTY
  *   1 NAV   numbers, arrows, bluetooth
  *   2 SYM   symbols
- *   3 ADJ   function keys, media, CODE toggle  (tri-layer: NAV + SYM)
- *   4 CODE  coding mode: home-row mods + symbol/bracket combos
+ *   3 ADJ   function keys, media, SPEED toggle  (tri-layer: NAV + SYM)
+ *   4 SPEED  coding mode: home-row mods + symbol/bracket combos
  *
  * Physical key positions (used by hold-trigger-key-positions and combos):
  *
@@ -29,7 +29,7 @@
 #define NAV  1
 #define SYM  2
 #define ADJ  3
-#define CODE 4
+#define SPEED 4
 
 /* Position groups for cross-hand-only hold-tap triggering. */
 #define LEFT_HAND  0  1  2  3  4  5 12 13 14 15 16 17 24 25 26 27 28 29
@@ -183,107 +183,16 @@
         compatible = "zmk,combos";
 
         /*
-         * Global: both outer thumb keys together toggles CODE mode.
+         * Global: both outer thumb keys together toggles SPEED mode.
          * Far apart on opposite halves, so it will not fire by accident.
          */
-        combo_toggle_code {
-            bindings = <&tog CODE>;
+        combo_toggle_speed {
+            bindings = <&tog SPEED>;
             key-positions = <36 41>;
             timeout-ms = <60>;
-            layers = <BASE CODE>;
+            layers = <BASE SPEED>;
         };
 
-        /*
-         * The rest are scoped to CODE only, so normal typing on BASE is never
-         * at risk of a misfire. Tighten timeout-ms if you still catch one.
-         */
-        combo_arrow {          /* J K   -> */
-            bindings = <&m_arrow>;
-            key-positions = <19 20>;
-            timeout-ms = <40>;
-            require-prior-idle-ms = <100>;
-            layers = <CODE>;
-        };
-
-        combo_fatarrow {       /* K L   => */
-            bindings = <&m_fatarrow>;
-            key-positions = <20 21>;
-            timeout-ms = <40>;
-            require-prior-idle-ms = <100>;
-            layers = <CODE>;
-        };
-
-        combo_scope {          /* I O   :: */
-            bindings = <&m_scope>;
-            key-positions = <8 9>;
-            timeout-ms = <40>;
-            require-prior-idle-ms = <100>;
-            layers = <CODE>;
-        };
-
-        combo_neq {            /* M ,   != */
-            bindings = <&m_neq>;
-            key-positions = <31 32>;
-            timeout-ms = <40>;
-            require-prior-idle-ms = <100>;
-            layers = <CODE>;
-        };
-
-        combo_eqeq {           /* , .   == */
-            bindings = <&m_eqeq>;
-            key-positions = <32 33>;
-            timeout-ms = <40>;
-            require-prior-idle-ms = <100>;
-            layers = <CODE>;
-        };
-
-        combo_and {            /* A S   && */
-            bindings = <&m_and>;
-            key-positions = <13 14>;
-            timeout-ms = <40>;
-            require-prior-idle-ms = <100>;
-            layers = <CODE>;
-        };
-
-        combo_or {             /* L ;   || */
-            bindings = <&m_or>;
-            key-positions = <21 22>;
-            timeout-ms = <40>;
-            require-prior-idle-ms = <100>;
-            layers = <CODE>;
-        };
-
-        combo_paren {          /* S D   () */
-            bindings = <&m_paren>;
-            key-positions = <14 15>;
-            timeout-ms = <40>;
-            require-prior-idle-ms = <100>;
-            layers = <CODE>;
-        };
-
-        combo_brace {          /* D F   {} */
-            bindings = <&m_brace>;
-            key-positions = <15 16>;
-            timeout-ms = <40>;
-            require-prior-idle-ms = <100>;
-            layers = <CODE>;
-        };
-
-        combo_bracket {        /* X C   [] */
-            bindings = <&m_bracket>;
-            key-positions = <26 27>;
-            timeout-ms = <40>;
-            require-prior-idle-ms = <100>;
-            layers = <CODE>;
-        };
-
-        combo_dquote {         /* C V   "" */
-            bindings = <&m_dquote>;
-            key-positions = <27 28>;
-            timeout-ms = <40>;
-            require-prior-idle-ms = <100>;
-            layers = <CODE>;
-        };
     };
 
     keymap {
@@ -323,26 +232,32 @@
             display-name = "ADJ";
             bindings = <
                 &trans     &trans &kp F7 &kp F8 &kp F9 &kp F12   &kp C_VOL_DN &kp C_MUTE &kp C_VOL_UP &trans &trans &kp BSPC
-                &tog CODE  &trans &kp F4 &kp F5 &kp F6 &kp F11   &trans       &trans     &trans       &trans &trans &trans
+                &tog SPEED  &trans &kp F4 &kp F5 &kp F6 &kp F11   &trans       &trans     &trans       &trans &trans &trans
                 &kp LSHFT  &trans &kp F1 &kp F2 &kp F3 &kp F10   &trans       &trans     &trans       &trans &trans &trans
                             &kp LGUI &mo NAV &kp SPACE           &kp RET &mo SYM &kp RALT
             >;
         };
 
         /*
-         * CODE — coding mode.
+         * SPEED — Dvorak typing mode.
          *
-         * Alphas are &trans so they fall through to BASE untouched; the only
-         * differences are the home-row mods, the combos above, and &tog CODE
-         * on the far right thumb to get back out.
+         * Standard Dvorak alpha layout:
+         *
+         *   ' , . P Y F G C R L /
+         *   A O E U I D H T N S -
+         *   ; Q J K X B M W V Z
+         *
+         * Thumb keys and the NAV/SYM layer access are unchanged.
+         * Toggle SPEED with the two outer thumb keys together, or
+         * with the far-right thumb key while SPEED is active.
          */
-        code {
-            display-name = "CODE";
+        speed {
+            display-name = "SPEED (DVORAK)";
             bindings = <
-                &trans &trans        &trans       &trans        &trans        &trans   &trans &trans        &trans        &trans       &trans           &trans
-                &trans &hml LGUI A   &hml LALT S  &hml LCTRL D  &hml LSHFT F  &trans   &trans &hmr RSHFT J  &hmr RCTRL K  &hmr RALT L  &hmr RGUI SEMI   &trans
-                &trans &trans        &trans       &trans        &trans        &trans   &trans &trans        &trans        &trans       &trans           &trans
-                                     &kp LGUI &mo NAV &kp SPACE                        &kp RET &mo SYM &tog CODE
+                &kp TAB   &kp SQT &kp COMMA &kp DOT &kp P &kp Y   &kp F &kp G &kp C &kp R &kp L &kp FSLH &kp BSPC
+                &kp LCTRL &kp A   &kp O     &kp E   &kp U &kp I   &kp D &kp H &kp T &kp N &kp S &kp MINUS
+                &kp LSHFT &kp SEMI &kp Q    &kp J   &kp K &kp X   &kp B &kp M &kp W &kp V &kp Z &kp ESC
+                              &kp LGUI &mo NAV &kp SPACE             &kp RET &mo SYM &tog SPEED
             >;
         };
 
